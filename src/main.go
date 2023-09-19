@@ -2,15 +2,21 @@ package main
 
 import (
 	"context"
-	"log"
 	"time"
 
 	configUtils "github.com/Malakhov-cmd/GPT-Telegram-Go.git/src/struct"
+	logger "github.com/Malakhov-cmd/GPT-Telegram-Go.git/src/util"
+
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/tucnak/telebot"
 )
 
+var (
+	log = logger.GetLogger()
+)
+
 func main() {
+	log.Info("Инициализация программы")
 
 	config := configUtils.GetConfig()
 
@@ -21,7 +27,7 @@ func main() {
 		},
 	})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Не удалось инициализировать телеграм бота")
 	}
 
 	// Подключение к API OpenAI с использованием вашего ключа API
@@ -44,7 +50,7 @@ func main() {
 		)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Не удалось подключиться к серверам OpenAI")
 		}
 
 		// Отправка ответа от GPT-3 обратно пользователю

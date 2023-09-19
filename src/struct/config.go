@@ -1,10 +1,14 @@
 package config
 
 import (
-	"log"
 	"os"
 
+	logger "github.com/Malakhov-cmd/GPT-Telegram-Go.git/src/util"
 	"gopkg.in/yaml.v3"
+)
+
+var (
+	log = logger.GetLogger()
 )
 
 type Config struct {
