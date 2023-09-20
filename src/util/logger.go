@@ -76,8 +76,8 @@ func createLogger() *zap.Logger {
 	// Создаем ядро логгера
 	core := zapcore.NewTee(
 		// Ядро для записи в файлы
-		zapcore.NewCore(zapcore.NewConsoleEncoder(config.EncoderConfig), zapcore.Lock(zapcore.AddSync(debugLog)), zap.NewAtomicLevelAt(config.Level.Level())),
-		zapcore.NewCore(zapcore.NewConsoleEncoder(config.EncoderConfig), zapcore.Lock(zapcore.AddSync(infoLog)), zap.NewAtomicLevelAt(config.Level.Level())),
+		zapcore.NewCore(zapcore.NewConsoleEncoder(config.EncoderConfig), zapcore.Lock(zapcore.AddSync(debugLog)), zap.NewAtomicLevelAt(zap.DebugLevel)),
+		zapcore.NewCore(zapcore.NewConsoleEncoder(config.EncoderConfig), zapcore.Lock(zapcore.AddSync(infoLog)), zap.NewAtomicLevelAt(zap.InfoLevel)),
 		zapcore.NewCore(zapcore.NewConsoleEncoder(config.EncoderConfig), zapcore.Lock(zapcore.AddSync(errorLog)), zap.NewAtomicLevelAt(zap.ErrorLevel)),
 		// Ядро для записи в консоль
 		zapcore.NewCore(consoleEncoder, consoleWriter, zapcore.DebugLevel),

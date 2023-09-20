@@ -4,11 +4,12 @@ import (
 	"context"
 	"time"
 
+	telegramHandlers "github.com/Malakhov-cmd/GPT-Telegram-Go.git/src/handler"
 	configUtils "github.com/Malakhov-cmd/GPT-Telegram-Go.git/src/struct"
 	logger "github.com/Malakhov-cmd/GPT-Telegram-Go.git/src/util"
 
 	openai "github.com/sashabaranov/go-openai"
-	"github.com/tucnak/telebot"
+	telebot "github.com/tucnak/telebot"
 )
 
 var (
@@ -30,11 +31,25 @@ func main() {
 		log.Fatal("Не удалось инициализировать телеграм бота")
 	}
 
+	bot.Handle("/start", telegramHandlers.GetStartHandler(bot))
+	bot.Handle("/help", telegramHandlers.GetHelpHandler(bot))
+
 	// Подключение к API OpenAI с использованием вашего ключа API
 	client := openai.NewClient(config.API_Keys.Openai_Keys[0])
 
 	// Обработчик событий при получении сообщения
 	bot.Handle(telebot.OnText, func(m *telebot.Message) {
+		waitingMessage, err := bot.Send(m.Sender, "генерация ответа...")
+
+		_, err = bot.Raw("sendChatAction", map[string]interface{}{
+			"chat_id": m.Chat.ID,
+			"action":  "typing",
+		})
+
+		if err != nil {
+			log.Debug("Не удалось установить typing action")
+		}
+
 		// Отправка текста сообщения в GPT-3 для генерации ответа
 		response, err := client.CreateChatCompletion(
 			context.Background(),
@@ -48,6 +63,8 @@ func main() {
 				},
 			},
 		)
+
+		bot.Delete(waitingMessage)
 
 		if err != nil {
 			log.Fatal("Не удалось подключиться к серверам OpenAI")
